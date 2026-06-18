@@ -6,8 +6,8 @@
 </p>
 
 <p align="center">
-  <a href="https://medical-chatbot-backend.onrender.com/docs" target="_blank">
-    <img src="https://img.shields.io/badge/Backend%20API-Live%20on%20Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Render Badge"/>
+  <a href="https://medical-chatbot-fhukbyptnm5s8dszi47h4h.streamlit.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🩺%20Try%20MediBot%20Live-Streamlit%20App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit App"/>
   </a>
   &nbsp;
   <a href="https://github.com/akashb1504/Medical-Chatbot" target="_blank">
@@ -212,10 +212,10 @@ cd client
 pip install -r requirements.txt
 ```
 
-Update `client/config.py` to point to your local backend:
+The `client/config.py` already defaults to localhost when `MEDIBOT_API_URL` is not set:
 
 ```python
-# client/config.py
+# client/config.py  (no changes needed for local dev)
 import os
 API_URL = os.getenv("MEDIBOT_API_URL", "http://127.0.0.1:8000")
 ```
@@ -252,12 +252,22 @@ Frontend will open at: `http://localhost:8501`
 
 ## 🌐 Live Deployment
 
+### 🎯 User-Facing App
+
+> **[👉 Open MediBot on Streamlit](https://medical-chatbot-fhukbyptnm5s8dszi47h4h.streamlit.app/)**
+
+This is the chatbot that you (and anyone else) should use. Just open the link and start asking medical questions — no sign-in needed.
+
+### 🔧 Backend (For Developers Only)
+
+The backend is a FastAPI server running on Render. Normal users never need to visit this — the Streamlit app calls it automatically in the background.
+
 | Service | URL |
 |---------|-----|
-| **Backend API (Render)** | https://medical-chatbot-backend.onrender.com |
-| **API Docs (Swagger UI)** | https://medical-chatbot-backend.onrender.com/docs |
+| **Backend API** | https://medical-chatbot-backend.onrender.com |
+| **Swagger UI (API Docs)** | https://medical-chatbot-backend.onrender.com/docs |
 
-> ⏱️ **Note:** The backend is hosted on Render's free tier, which spins down after 15 minutes of inactivity. The first request after inactivity may take **20–30 seconds** to wake up. Subsequent requests are fast.
+> ⏱️ **Note:** The backend runs on Render's free tier and sleeps after 15 minutes of inactivity. The first chat message after a long idle period may take **20–30 seconds** while the server wakes up. Subsequent messages are fast.
 
 ---
 
