@@ -17,22 +17,7 @@
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Badge"/>
 </p>
 
----
 
-## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Local Setup & Running](#-local-setup--running)
-- [Environment Variables](#-environment-variables)
-- [Live Deployment](#-live-deployment)
-- [API Reference](#-api-reference)
-- [Disclaimer](#-disclaimer)
-
----
 
 ## 🔍 Overview
 
@@ -55,38 +40,7 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 - ⚠️ **Always-On Disclaimer** — Medical disclaimer displayed on every response
 - 🚫 **Off-Topic Refusal** — Bot politely declines non-medical questions
 - 🧠 **LLaMA 3.1 via Groq** — Fast inference with the latest open-source LLM
-- 🔒 **Memory-Safe** — Uses HuggingFace Inference API for embeddings (no local model loading, works on 512MB servers)
 
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  Streamlit Cloud (Frontend)              │
-│  client/app.py                                          │
-│    ├── Sidebar: PDF Upload + Mode Badge                 │
-│    ├── Disclaimer Banner (always shown)                 │
-│    └── Chat Interface                                   │
-└────────────────────┬────────────────────────────────────┘
-                     │  HTTP POST /ask/  (use_rag=True/False)
-                     │  HTTP POST /upload_pdfs/
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                  Render (Backend — FastAPI)              │
-│  server/main.py                                         │
-│    ├── /ask/ with use_rag=False                         │
-│    │     └── LLaMA 3.1 (Groq) — General medical mode   │
-│    ├── /ask/ with use_rag=True                          │
-│    │     ├── HF Inference API → embed query             │
-│    │     ├── Pinecone → retrieve top-3 chunks           │
-│    │     └── LLaMA 3.1 (Groq) → grounded answer        │
-│    └── /upload_pdfs/                                    │
-│          ├── PyPDF → load & split into chunks           │
-│          ├── HF Inference API → embed chunks (batched)  │
-│          └── Pinecone → upsert vectors (batched)        │
-└─────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -96,50 +50,12 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 |-------|-----------|
 | **Frontend** | Streamlit |
 | **Backend** | FastAPI + Uvicorn |
-| **LLM** | LLaMA 3.1 8B Instant via [Groq](https://groq.com) |
-| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` via [HuggingFace Inference API](https://huggingface.co/inference-api) |
-| **Vector Store** | [Pinecone](https://pinecone.io) (Serverless, AWS us-east-1) |
+| **LLM** | LLaMA 3.1 8B Instant via Groq |
+| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` via HuggingFace Inference API|
+| **Vector Store** | Pinecone|
 | **RAG Framework** | LangChain |
 | **PDF Parsing** | PyPDF |
 | **Deployment** | Render (backend) + Streamlit Cloud (frontend) |
-
----
-
-## 📁 Project Structure
-
-```
-Medical-Chatbot/
-├── client/                         # Streamlit frontend
-│   ├── app.py                      # Main Streamlit app entry point
-│   ├── config.py                   # API URL config (reads from env var)
-│   ├── requirements.txt            # Frontend dependencies
-│   ├── components/
-│   │   ├── chatUI.py               # Chat interface with disclaimer & mode indicator
-│   │   ├── upload.py               # PDF uploader + sidebar mode badge
-│   │   └── history_download.py     # Chat history download
-│   └── utils/
-│       └── api.py                  # HTTP client functions for the backend
-│
-├── server/                         # FastAPI backend
-│   ├── main.py                     # FastAPI app, routes, middleware
-│   ├── requirements.txt            # Backend dependencies
-│   ├── logger.py                   # Logging setup
-│   ├── .env                        # ⚠️ NOT committed — add your keys here locally
-│   ├── uploaded_docs/              # Temp storage for uploaded PDFs (auto-cleaned)
-│   ├── modules/
-│   │   ├── llm.py                  # LLM chains (general mode + RAG mode)
-│   │   ├── load_vectorstore.py     # PDF processing + Pinecone upsert (batched)
-│   │   ├── query_handlers.py       # RAG chain execution
-│   │   └── pdf_handlers.py         # PDF utilities
-│   ├── routes/
-│   │   ├── ask_question.py         # POST /ask/ — routes between general & RAG mode
-│   │   └── upload_pdfs.py          # POST /upload_pdfs/
-│   └── middlewares/
-│       └── exception_handlers.py   # Global error handling
-│
-├── .gitignore
-└── README.md
-```
 
 ---
 
@@ -167,8 +83,6 @@ python -m venv .venv
 
 # On Windows:
 .venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -185,11 +99,6 @@ PINECONE_API_KEY=your_pinecone_api_key_here
 PINECONE_INDEX_NAME=medicalindex
 HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 ```
-
-> **Where to get the keys:**
-> - **Groq** → [console.groq.com](https://console.groq.com) (free tier available)
-> - **Pinecone** → [app.pinecone.io](https://app.pinecone.io) (free Serverless tier — create an index named `medicalindex` with dimension `384` and metric `dotproduct`)
-> - **HuggingFace** → [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) (free, needs Inference API access)
 
 ### 4. Start the Backend Server
 
@@ -229,26 +138,7 @@ streamlit run app.py
 
 Frontend will open at: `http://localhost:8501`
 
----
 
-## 🔑 Environment Variables
-
-### Backend (`server/.env`)
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GROQ_API_KEY` | Groq API key for LLaMA 3.1 inference | ✅ |
-| `PINECONE_API_KEY` | Pinecone API key for vector storage | ✅ |
-| `PINECONE_INDEX_NAME` | Name of your Pinecone index (default: `medicalindex`) | ✅ |
-| `HUGGINGFACE_API_KEY` | HuggingFace token for Inference API embeddings | ✅ |
-
-### Frontend (Streamlit Cloud Secrets or local env)
-
-| Variable | Description |
-|----------|-------------|
-| `MEDIBOT_API_URL` | URL of the deployed backend (e.g. `https://medical-chatbot-backend.onrender.com`) |
-
----
 
 ## 🌐 Live Deployment
 
@@ -257,79 +147,3 @@ Frontend will open at: `http://localhost:8501`
 > **[👉 Open MediBot on Streamlit](https://medical-chatbot-fhukbyptnm5s8dszi47h4h.streamlit.app/)**
 
 This is the chatbot that you (and anyone else) should use. Just open the link and start asking medical questions — no sign-in needed.
-
-### 🔧 Backend (For Developers Only)
-
-The backend is a FastAPI server running on Render. Normal users never need to visit this — the Streamlit app calls it automatically in the background.
-
-| Service | URL |
-|---------|-----|
-| **Backend API** | https://medical-chatbot-backend.onrender.com |
-| **Swagger UI (API Docs)** | https://medical-chatbot-backend.onrender.com/docs |
-
-> ⏱️ **Note:** The backend runs on Render's free tier and sleeps after 15 minutes of inactivity. The first chat message after a long idle period may take **20–30 seconds** while the server wakes up. Subsequent messages are fast.
-
----
-
-## 📡 API Reference
-
-### `POST /ask/`
-
-Ask a medical question in either general or RAG mode.
-
-**Form fields:**
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `question` | `string` | required | The medical question to ask |
-| `use_rag` | `boolean` | `false` | Set `true` to use uploaded PDF context |
-
-**Response:**
-
-```json
-{
-  "response": "Diabetes symptoms include increased thirst, frequent urination...\n⚠️ This is general medical information only...",
-  "sources": ["DIABETES.pdf"],
-  "mode": "rag"
-}
-```
-
-| Field | Description |
-|-------|-------------|
-| `response` | The answer text (always includes disclaimer) |
-| `sources` | List of source PDF filenames (empty in general mode) |
-| `mode` | `"general"` or `"rag"` |
-
----
-
-### `POST /upload_pdfs/`
-
-Upload one or more PDF files to be embedded and stored in Pinecone.
-
-**Form fields:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `files` | `List[UploadFile]` | One or more PDF files |
-
-**Response:**
-
-```json
-{
-  "messages": "Files processed and vectorstore updated"
-}
-```
-
----
-
-## ⚠️ Disclaimer
-
-**MediBot is for informational and educational purposes only.**
-
-This chatbot does **not** provide medical advice, diagnosis, or treatment recommendations. Always consult a qualified healthcare professional for any medical concerns. Never disregard professional medical advice or delay seeking it because of something this chatbot says.
-
----
-
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/akashb1504">akashb1504</a>
-</p>
