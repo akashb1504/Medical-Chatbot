@@ -145,5 +145,4 @@ Frontend will open at: `http://localhost:8501`
 ### 🎯 User-Facing App
 
 > **[👉 Open MediBot on Streamlit](https://medical-chatbot-fhukbyptnm5s8dszi47h4h.streamlit.app/)**
-
-This is the chatbot that you (and anyone else) should use. Just open the link and start asking medical questions — no sign-in needed.
+Just open the link and start asking medical questions — no sign-in needed.
