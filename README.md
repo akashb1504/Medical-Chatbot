@@ -97,7 +97,6 @@ Create a `.env` file inside the `server/` folder:
 GROQ_API_KEY=your_groq_api_key_here
 PINECONE_API_KEY=your_pinecone_api_key_here
 PINECONE_INDEX_NAME=medicalindex
-HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 ```
 
 ### 4. Start the Backend Server
