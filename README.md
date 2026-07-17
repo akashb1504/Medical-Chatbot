@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>A dual-mode AI chatbot for general medical Q&A and PDF-based medical document analysis.</b><br/>
-  Powered by <b>LLaMA 3.1</b> via Groq · <b>Pinecone</b> vector store · <b>HuggingFace</b> embeddings · <b>LangChain</b> RAG pipeline
+  Powered by <b>LLaMA 3.1</b> via Groq · <b>Pinecone</b> vector store · <b>FastEmbed</b> embeddings · <b>LangChain</b> RAG pipeline
 </p>
 
 <p align="center">
@@ -25,10 +25,10 @@
 
 | Mode | Trigger | How it works |
 |------|---------|--------------|
-| 🔵 **General Medical Mode** | Default (no PDF uploaded) | Answers general health questions using LLaMA 3.1. Refuses non-medical questions. |
+| 🔵 **General Medical Mode** | Default (no PDF uploaded) | Answers general health questions using LLaMA 3.1. |
 | 🟢 **PDF-Assisted Mode (RAG)** | After uploading a PDF | Retrieves relevant chunks from your document via Pinecone, then generates a grounded answer with source citations. |
 
-Every response includes a ⚠️ medical disclaimer reminding users this is informational only.
+A medical disclaimer is shown on the page reminding users this is informational only, not medical advice.
 
 ---
 
@@ -36,9 +36,9 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 
 - 💬 **General Medical Q&A** — Ask any health question without uploading anything
 - 📄 **PDF Upload + RAG** — Upload medical PDFs and get answers grounded in your documents
-- 📌 **Source Citations** — In RAG mode, see exactly which document the answer came from
-- ⚠️ **Always-On Disclaimer** — Medical disclaimer displayed on every response
-- 🚫 **Off-Topic Refusal** — Bot politely declines non-medical questions
+- 📌 **Source Citations** — In RAG mode, see exactly which document and page the answer came from
+- 🔒 **Session-Based Isolation** — Each user session has its own `session_id`, which is used to filter Pinecone queries so one user's uploaded PDFs never leak into another user's answers
+- ⚠️ **Medical Disclaimer** — Displayed on the page as a reminder that responses are educational, not medical advice
 - 🧠 **LLaMA 3.1 via Groq** — Fast inference with the latest open-source LLM
 
 
@@ -51,8 +51,8 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 | **Frontend** | Streamlit |
 | **Backend** | FastAPI + Uvicorn |
 | **LLM** | LLaMA 3.1 8B Instant via Groq |
-| **Embeddings** | BAAI/bge-small-en-v1.5|
-| **Vector Store** | Pinecone|
+| **Embeddings** | FastEmbed (BAAI/bge-small-en-v1.5) |
+| **Vector Store** | Pinecone |
 | **RAG Framework** | LangChain |
 | **PDF Parsing** | PyPDF |
 | **Deployment** | Render (backend) + Streamlit Cloud (frontend) |
@@ -64,7 +64,7 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 ### Prerequisites
 
 - Python 3.11+
-- API keys for: **Groq**, **Pinecone**, **HuggingFace**
+- API keys for: **Groq**, **Pinecone**
 
 ### 1. Clone the Repository
 
