@@ -51,7 +51,7 @@ Every response includes a ⚠️ medical disclaimer reminding users this is info
 | **Frontend** | Streamlit |
 | **Backend** | FastAPI + Uvicorn |
 | **LLM** | LLaMA 3.1 8B Instant via Groq |
-| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` via HuggingFace Inference API|
+| **Embeddings** | BAAI/bge-small-en-v1.5|
 | **Vector Store** | Pinecone|
 | **RAG Framework** | LangChain |
 | **PDF Parsing** | PyPDF |
